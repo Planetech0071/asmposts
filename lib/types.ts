@@ -24,11 +24,10 @@ export interface Post {
   filters: PostFilter[];
   taggedMembers: TaggedMember[];
   images: string[];
-  authorId: string;
   authorName: string;
   status: PostStatus;
-  createdAt: Date;
-  reviewedAt?: Date;
+  createdAt: string; // Changed to string to match Supabase timestamp
+  reviewedAt?: string;
   reviewedBy?: string;
   rejectionReason?: string;
 }
@@ -90,11 +89,10 @@ export const DEMO_POSTS: Post[] = [
       { fullName: 'Luca Ferrari', role: 'Delegate' }
     ],
     images: ['/demo/mun-conference.jpg'],
-    authorId: 'student-001',
     authorName: 'Marco Rossi',
     status: 'approved',
-    createdAt: new Date('2024-01-15'),
-    reviewedAt: new Date('2024-01-16'),
+    createdAt: '2024-01-15T00:00:00.000Z',
+    reviewedAt: '2024-01-16T00:00:00.000Z',
     reviewedBy: 'admin-001'
   },
   {
@@ -107,10 +105,9 @@ export const DEMO_POSTS: Post[] = [
       { fullName: 'James Miller', role: 'Choir Lead' }
     ],
     images: ['/demo/spring-concert.jpg'],
-    authorId: 'student-002',
     authorName: 'Sofia Chen',
     status: 'pending',
-    createdAt: new Date('2024-01-20')
+    createdAt: '2024-01-20T00:00:00.000Z'
   },
   {
     id: 'post-003',
@@ -122,11 +119,10 @@ export const DEMO_POSTS: Post[] = [
       { fullName: 'Michael Thompson', role: 'MVP' }
     ],
     images: ['/demo/basketball-win.jpg'],
-    authorId: 'student-001',
     authorName: 'Marco Rossi',
     status: 'approved',
-    createdAt: new Date('2024-01-18'),
-    reviewedAt: new Date('2024-01-18'),
+    createdAt: '2024-01-18T00:00:00.000Z',
+    reviewedAt: '2024-01-18T00:00:00.000Z',
     reviewedBy: 'admin-001'
   }
 ];

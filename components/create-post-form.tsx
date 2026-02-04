@@ -28,7 +28,7 @@ export function CreatePostForm({ onSuccess }: CreatePostFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const { createPost } = useAppStore();
+  const { createPost, currentUser } = useAppStore();
 
   const toggleFilter = (filter: PostFilter) => {
     setSelectedFilters(prev =>
@@ -70,32 +70,37 @@ export function CreatePostForm({ onSuccess }: CreatePostFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentUser) return;
+    
     setIsSubmitting(true);
 
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    try {
+      await createPost({
+        title,
+        description,
+        filters: selectedFilters,
+        taggedMembers,
+        images,
+        authorName: currentUser.fullName
+      });
 
-    createPost({
-      title,
-      description,
-      filters: selectedFilters,
-      taggedMembers,
-      images
-    });
-
-    setShowSuccess(true);
-    setIsSubmitting(false);
-
-    // Reset form after delay
-    setTimeout(() => {
-      setTitle('');
-      setDescription('');
-      setSelectedFilters([]);
-      setTaggedMembers([]);
-      setImages([]);
-      setShowSuccess(false);
-      onSuccess();
-    }, 2000);
+      setShowSuccess(true);
+      
+      // Reset form after delay
+      setTimeout(() => {
+        setTitle('');
+        setDescription('');
+        setSelectedFilters([]);
+        setTaggedMembers([]);
+        setImages([]);
+        setShowSuccess(false);
+        onSuccess();
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to create post:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (showSuccess) {

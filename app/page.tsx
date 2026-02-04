@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ASMHeader } from '@/components/asm-header';
 import { HomeView } from '@/components/home-view';
 import { CreatePostForm } from '@/components/create-post-form';
@@ -12,7 +12,11 @@ type ViewType = 'home' | 'create' | 'admin' | 'posts';
 
 export default function ASMStudentPostsDemo() {
   const [currentView, setCurrentView] = useState<ViewType>('home');
-  const { currentUser, isAuthenticated } = useAppStore();
+  const { currentUser, isAuthenticated, loadPosts } = useAppStore();
+
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
 
   const handleNavigate = (view: ViewType) => {
     // Check permissions

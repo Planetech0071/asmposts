@@ -34,13 +34,13 @@ export function AdminPanel() {
   const approvedPosts = getApprovedPosts();
   const rejectedPosts = posts.filter(p => p.status === 'rejected');
 
-  const handleApprove = (post: Post) => {
-    updatePostStatus(post.id, 'approved');
+  const handleApprove = async (post: Post) => {
+    await updatePostStatus(post.id, 'approved');
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
     if (selectedPost) {
-      updatePostStatus(selectedPost.id, 'rejected', rejectionReason);
+      await updatePostStatus(selectedPost.id, 'rejected', rejectionReason);
       setShowRejectDialog(false);
       setRejectionReason('');
       setSelectedPost(null);

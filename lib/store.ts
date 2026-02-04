@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { Post, User, DEMO_POSTS, DEMO_USERS, PostStatus, PostFilter, TaggedMember } from './types';
+import { getPosts, createPost as createPostInDB, updatePostStatus as updatePostStatusInDB } from './supabase/posts';
 
 interface AppState {
   // Auth
@@ -10,21 +11,24 @@ interface AppState {
   
   // Posts
   posts: Post[];
+  loading: boolean;
   
   // Actions
   login: (username: string, password: string) => boolean;
   logout: () => void;
-  createPost: (post: Omit<Post, 'id' | 'createdAt' | 'status' | 'authorId' | 'authorName'>) => void;
-  updatePostStatus: (postId: string, status: PostStatus, rejectionReason?: string) => void;
+  loadPosts: () => Promise<void>;
+  createPost: (post: Omit<Post, 'id' | 'createdAt' | 'status' | 'authorName'> & { authorName: string }) => Promise<void>;
+  updatePostStatus: (postId: string, status: PostStatus, rejectionReason?: string) => Promise<void>;
   getPendingPosts: () => Post[];
   getApprovedPosts: () => Post[];
-  getPostsByAuthor: (authorId: string) => Post[];
+  getPostsByAuthor: (authorName: string) => Post[];
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
   currentUser: null,
   isAuthenticated: false,
-  posts: DEMO_POSTS,
+  posts: [],
+  loading: false,
   
   login: (username: string, password: string) => {
     const user = DEMO_USERS.find(
@@ -42,39 +46,50 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ currentUser: null, isAuthenticated: false });
   },
   
-  createPost: (postData) => {
-    const { currentUser, posts } = get();
-    if (!currentUser) return;
-    
-    const newPost: Post = {
-      ...postData,
-      id: `post-${Date.now()}`,
-      authorId: currentUser.id,
-      authorName: currentUser.fullName,
-      status: 'pending',
-      createdAt: new Date()
-    };
-    
-    set({ posts: [...posts, newPost] });
+  loadPosts: async () => {
+    set({ loading: true });
+    try {
+      const posts = await getPosts();
+      set({ posts, loading: false });
+    } catch (error) {
+      console.error('Failed to load posts:', error);
+      set({ posts: DEMO_POSTS, loading: false }); // Fallback to demo posts
+    }
   },
   
-  updatePostStatus: (postId: string, status: PostStatus, rejectionReason?: string) => {
-    const { currentUser, posts } = get();
+  createPost: async (postData) => {
+    const { currentUser } = get();
+    if (!currentUser) return;
+    
+    try {
+      await createPostInDB({
+        title: postData.title,
+        description: postData.description,
+        filters: postData.filters,
+        taggedMembers: postData.taggedMembers,
+        images: postData.images,
+        authorName: postData.authorName,
+      });
+      
+      // Reload posts after creating
+      await get().loadPosts();
+    } catch (error) {
+      console.error('Failed to create post:', error);
+    }
+  },
+  
+  updatePostStatus: async (postId: string, status: PostStatus, rejectionReason?: string) => {
+    const { currentUser } = get();
     if (!currentUser || currentUser.role !== 'admin') return;
     
-    set({
-      posts: posts.map(post =>
-        post.id === postId
-          ? {
-              ...post,
-              status,
-              reviewedAt: new Date(),
-              reviewedBy: currentUser.id,
-              rejectionReason: rejectionReason || undefined
-            }
-          : post
-      )
-    });
+    try {
+      await updatePostStatusInDB(postId, status, currentUser.id, rejectionReason);
+      
+      // Reload posts after updating
+      await get().loadPosts();
+    } catch (error) {
+      console.error('Failed to update post status:', error);
+    }
   },
   
   getPendingPosts: () => {
@@ -85,7 +100,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     return get().posts.filter(post => post.status === 'approved');
   },
   
-  getPostsByAuthor: (authorId: string) => {
-    return get().posts.filter(post => post.authorId === authorId);
+  getPostsByAuthor: (authorName: string) => {
+    return get().posts.filter(post => post.authorName === authorName);
   }
 }));
