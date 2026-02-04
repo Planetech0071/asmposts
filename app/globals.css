@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ASM Student Posts - American School of Milan Theme */
-/* Primary: #C61F33 (ASM Red), Secondary: #121F48 (ASM Navy), Third: #EEEEEE (Light Gray) */
+/* Primary: #A0182A (Darker ASM Red), Secondary: #121F48 (ASM Navy), Third: #EEEEEE (Light Gray) */
 :root {
   --background: #FFFFFF;
   --foreground: #121F48;
@@ -12,7 +12,7 @@
   --card-foreground: #121F48;
   --popover: #FFFFFF;
   --popover-foreground: #121F48;
-  --primary: #C61F33;
+  --primary: #A0182A;
   --primary-foreground: #FFFFFF;
   --secondary: #121F48;
   --secondary-foreground: #FFFFFF;
@@ -26,8 +26,8 @@
   --success-foreground: #FFFFFF;
   --border: #d1d5db;
   --input: #EEEEEE;
-  --ring: #C61F33;
-  --chart-1: #C61F33;
+  --ring: #A0182A;
+  --chart-1: #A0182A;
   --chart-2: #121F48;
   --chart-3: #16a34a;
   --chart-4: #eab308;
@@ -35,12 +35,12 @@
   --radius: 0.5rem;
   --sidebar: #EEEEEE;
   --sidebar-foreground: #121F48;
-  --sidebar-primary: #C61F33;
+  --sidebar-primary: #A0182A;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #d1d5db;
   --sidebar-accent-foreground: #121F48;
   --sidebar-border: #d1d5db;
-  --sidebar-ring: #C61F33;
+  --sidebar-ring: #A0182A;
 }
 
 .dark {

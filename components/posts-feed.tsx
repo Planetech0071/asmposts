@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Filter, Calendar, Grid, List, ChevronDown } from 'lucide-react';
+import { Search, Filter, Calendar, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,14 +20,14 @@ import {
 import { useAppStore } from '@/lib/store';
 import { FILTERS, PostFilter, Post } from '@/lib/types';
 import { PostPreview } from './post-preview';
+import { LoginForm } from './login-form';
 
 export function PostsFeed() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<PostFilter[]>([]);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
-  const { getApprovedPosts } = useAppStore();
+  const { getApprovedPosts, isAuthenticated } = useAppStore();
   const approvedPosts = getApprovedPosts();
 
   // Filter posts based on search and filters
@@ -112,27 +112,6 @@ export function PostsFeed() {
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <div className="flex border border-border rounded-md">
-            <Button
-              variant={viewMode === 'grid' ? 'secondary' : 'ghost'}
-              size="icon"
-              onClick={() => setViewMode('grid')}
-              className="rounded-r-none"
-              aria-label="Grid view"
-            >
-              <Grid className="h-4 w-4" />
-            </Button>
-            <Button
-              variant={viewMode === 'list' ? 'secondary' : 'ghost'}
-              size="icon"
-              onClick={() => setViewMode('list')}
-              className="rounded-l-none"
-              aria-label="List view"
-            >
-              <List className="h-4 w-4" />
-            </Button>
-          </div>
         </div>
       </div>
 
@@ -177,7 +156,7 @@ export function PostsFeed() {
         Showing {filteredPosts.length} {filteredPosts.length === 1 ? 'post' : 'posts'}
       </p>
 
-      {/* Posts Grid/List */}
+      {/* Posts List - All posts displayed fully */}
       {filteredPosts.length === 0 ? (
         <div className="text-center py-16 bg-muted/50 rounded-lg">
           <Search className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
@@ -189,65 +168,118 @@ export function PostsFeed() {
             Clear filters
           </Button>
         </div>
-      ) : viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPosts.map(post => (
-            <button
-              key={post.id}
-              type="button"
-              onClick={() => setSelectedPost(post)}
-              className="text-left cursor-pointer"
-            >
-              <PostPreview post={post} compact />
-            </button>
-          ))}
-        </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {filteredPosts.map(post => (
-            <button
-              key={post.id}
-              type="button"
-              onClick={() => setSelectedPost(post)}
-              className="w-full text-left bg-card rounded-lg border border-border p-4 hover:shadow-md transition-shadow cursor-pointer"
-            >
-              <div className="flex gap-4">
-                <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center shrink-0">
-                  <Grid className="h-8 w-8 text-muted-foreground/50" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex flex-wrap gap-1 mb-2">
-                    {post.filters.map(filter => (
-                      <Badge key={filter} variant="secondary" className="text-xs">
-                        {filter}
-                      </Badge>
-                    ))}
+            <article key={post.id} className="bg-card rounded-lg border border-border overflow-hidden shadow-sm">
+              {/* Post Header */}
+              <div className="bg-primary text-primary-foreground px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary-foreground rounded-full flex items-center justify-center">
+                      <span className="text-primary font-bold text-sm">ASM</span>
+                    </div>
+                    <div>
+                      <p className="text-xs text-primary-foreground/80">American School of Milan</p>
+                      <p className="text-sm font-medium">Student Posts</p>
+                    </div>
                   </div>
-                  <h3 className="font-semibold text-foreground mb-1 truncate">{post.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{post.description}</p>
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      {formatDate(post.createdAt)}
-                    </span>
-                    <span>By {post.authorName}</span>
-                  </div>
+                  <span className="text-sm text-primary-foreground/80">{formatDate(post.createdAt)}</span>
                 </div>
               </div>
-            </button>
+
+              {/* Post Content */}
+              <div className="p-6">
+                {/* Title */}
+                <h2 className="text-2xl font-bold text-foreground mb-4">{post.title}</h2>
+
+                {/* Filters */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {post.filters.map(filter => (
+                    <Badge key={filter} className="bg-primary/10 text-primary border-primary/20">
+                      {filter}
+                    </Badge>
+                  ))}
+                </div>
+
+                {/* Images */}
+                {post.images.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    {post.images.map((image, index) => (
+                      <div key={index} className="aspect-video bg-muted rounded-lg overflow-hidden">
+                        <img
+                          src={image}
+                          alt={`Post image ${index + 1}`}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling.style.display = 'flex';
+                          }}
+                        />
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground hidden">
+                          <ImageIcon className="h-8 w-8" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Description */}
+                <p className="text-foreground leading-relaxed mb-6 whitespace-pre-wrap">
+                  {post.description}
+                </p>
+
+                {/* Tagged Members */}
+                {post.taggedMembers.length > 0 && (
+                  <div className="mb-4">
+                    <h4 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Participants
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {post.taggedMembers.map((member, index) => (
+                        <div key={index} className="flex items-center gap-2 px-3 py-1 bg-secondary rounded-full">
+                          <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center">
+                            <span className="text-xs font-medium text-primary">
+                              {member.fullName.split(' ').map(n => n[0]).join('')}
+                            </span>
+                          </div>
+                          <span className="text-sm">{member.fullName}</span>
+                          {member.role && (
+                            <span className="text-xs text-muted-foreground">({member.role})</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-4 border-t border-border text-sm text-muted-foreground">
+                  <span className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    Posted {formatDate(post.createdAt)}
+                  </span>
+                  <span>By {post.authorName}</span>
+                </div>
+              </div>
+            </article>
           ))}
         </div>
       )}
 
-      {/* Post Detail Dialog */}
-      <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="sr-only">Post Details</DialogTitle>
-          </DialogHeader>
-          {selectedPost && <PostPreview post={selectedPost} />}
-        </DialogContent>
-      </Dialog>
+      {/* Login Section */}
+      {!isAuthenticated && (
+        <div className="mt-12 pt-8 border-t border-border">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-foreground mb-2">Login to Create Posts</h3>
+            <p className="text-muted-foreground mb-6">
+              Students can create posts, and administrators can approve them.
+            </p>
+            <LoginForm />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

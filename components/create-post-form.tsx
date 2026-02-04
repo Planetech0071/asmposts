@@ -56,11 +56,15 @@ export function CreatePostForm({ onSuccess }: CreatePostFormProps) {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      // For demo, we'll create placeholder URLs
-      const newImages = Array.from(files).map((file, index) => 
-        `/uploads/image-${Date.now()}-${index}.jpg`
-      );
-      setImages(prev => [...prev, ...newImages]);
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            setImages(prev => [...prev, e.target.result as string]);
+          }
+        };
+        reader.readAsDataURL(file);
+      });
     }
   };
 
@@ -258,9 +262,11 @@ export function CreatePostForm({ onSuccess }: CreatePostFormProps) {
               <div className="flex flex-wrap gap-2 mb-3">
                 {images.map((image, index) => (
                   <div key={index} className="relative w-20 h-20 bg-muted rounded-lg overflow-hidden group">
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <ImageIcon className="h-6 w-6" />
-                    </div>
+                    <img
+                      src={image}
+                      alt={`Upload preview ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
                     <button
                       type="button"
                       onClick={() => removeImage(index)}
