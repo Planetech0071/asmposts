@@ -9,7 +9,7 @@ interface PDFPreviewProps {
 }
 
 export function PDFPreview({ post, orientation }: PDFPreviewProps) {
-  const formatDate = (date: Date) => {
+  const formatDate = (date: string | Date) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',

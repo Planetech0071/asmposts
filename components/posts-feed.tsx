@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Filter, Calendar, ChevronDown } from 'lucide-react';
+import { Search, Filter, Calendar, ChevronDown, ImageIcon, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -56,7 +56,7 @@ export function PostsFeed() {
     setSearchQuery('');
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: string | Date) => {
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -213,7 +213,10 @@ export function PostsFeed() {
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling.style.display = 'flex';
+                            const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
+                            if (nextSibling) {
+                              nextSibling.style.display = 'flex';
+                            }
                           }}
                         />
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground hidden">
@@ -276,7 +279,7 @@ export function PostsFeed() {
             <p className="text-muted-foreground mb-6">
               Students can create posts, and administrators can approve them.
             </p>
-            <LoginForm />
+            <LoginForm onSuccess={() => {}} />
           </div>
         </div>
       )}

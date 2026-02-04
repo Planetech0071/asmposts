@@ -30,6 +30,16 @@ export function AdminPanel() {
 
   const { posts, updatePostStatus, getPendingPosts, getApprovedPosts } = useAppStore();
 
+  const formatDate = (date: string | Date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   const pendingPosts = getPendingPosts();
   const approvedPosts = getApprovedPosts();
   const rejectedPosts = posts.filter(p => p.status === 'rejected');
@@ -61,16 +71,6 @@ export function AdminPanel() {
     setSelectedPost(post);
     setPdfOrientation(orientation);
     setShowPDFPreview(true);
-  };
-
-  const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
   };
 
   const PostCard = ({ post, showActions = true }: { post: Post; showActions?: boolean }) => (

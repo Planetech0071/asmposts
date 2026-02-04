@@ -58,9 +58,9 @@ export function CreatePostForm({ onSuccess }: CreatePostFormProps) {
     if (files) {
       Array.from(files).forEach(file => {
         const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            setImages(prev => [...prev, e.target.result as string]);
+        reader.onload = (event) => {
+          if (event.target?.result) {
+            setImages(prev => [...prev, event.target!.result as string]);
           }
         };
         reader.readAsDataURL(file);

@@ -13,8 +13,8 @@ import {
 import { useAppStore } from '@/lib/store';
 
 interface ASMHeaderProps {
-  currentView: 'home' | 'create' | 'admin' | 'posts';
-  onNavigate: (view: 'home' | 'create' | 'admin' | 'posts') => void;
+  currentView: 'create' | 'admin' | 'posts';
+  onNavigate: (view: 'create' | 'admin' | 'posts') => void;
 }
 
 export function ASMHeader({ currentView, onNavigate }: ASMHeaderProps) {
@@ -22,7 +22,7 @@ export function ASMHeader({ currentView, onNavigate }: ASMHeaderProps) {
   const { currentUser, isAuthenticated, logout } = useAppStore();
 
   const navItems = [
-    { id: 'home', label: 'Home', showAlways: true },
+    { id: 'posts', label: 'Posts', showAlways: true },
     { id: 'posts', label: 'Student Posts', showAlways: true },
     { id: 'create', label: 'Create Post', showWhen: isAuthenticated && currentUser?.role === 'student' },
     { id: 'admin', label: 'Admin Panel', showWhen: isAuthenticated && currentUser?.role === 'admin' },
@@ -60,7 +60,7 @@ export function ASMHeader({ currentView, onNavigate }: ASMHeaderProps) {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => onNavigate(item.id as 'home' | 'create' | 'admin' | 'posts')}
+                onClick={() => onNavigate(item.id as 'create' | 'admin' | 'posts')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                   currentView === item.id
                     ? 'bg-primary-foreground/20 text-primary-foreground'
@@ -98,7 +98,7 @@ export function ASMHeader({ currentView, onNavigate }: ASMHeaderProps) {
               <Button 
                 variant="secondary" 
                 size="sm"
-                onClick={() => onNavigate('home')}
+                onClick={() => onNavigate('posts')}
               >
                 Sign In
               </Button>
@@ -115,7 +115,7 @@ export function ASMHeader({ currentView, onNavigate }: ASMHeaderProps) {
                   key={item.id}
                   type="button"
                   onClick={() => {
-                    onNavigate(item.id as 'home' | 'create' | 'admin' | 'posts');
+                    onNavigate(item.id as 'create' | 'admin' | 'posts');
                     setMobileMenuOpen(false);
                   }}
                   className={`px-4 py-2 text-left text-sm font-medium rounded-md transition-colors ${
