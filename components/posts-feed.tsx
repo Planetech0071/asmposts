@@ -207,60 +207,66 @@ export function PostsFeed() {
                   ))}
                 </div>
 
-                {/* Images */}
-                {post.images.length > 0 && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                    {post.images.map((image, index) => (
-                      <div key={index} className="aspect-video bg-muted rounded-lg overflow-hidden">
-                        <img
-                          src={image}
-                          alt={`Post image ${index + 1}`}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
-                            if (nextSibling) {
-                              nextSibling.style.display = 'flex';
-                            }
-                          }}
-                        />
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground hidden">
-                          <ImageIcon className="h-8 w-8" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Description */}
-                <p className="text-foreground leading-relaxed mb-6 whitespace-pre-wrap">
-                  {post.description}
-                </p>
-
-                {/* Tagged Members */}
-                {post.taggedMembers.length > 0 && (
-                  <div className="mb-4">
-                    <h4 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      Participants
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {post.taggedMembers.map((member, index) => (
-                        <div key={index} className="flex items-center gap-2 px-3 py-1 bg-secondary rounded-full">
-                          <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center">
-                            <span className="text-xs font-medium text-primary">
-                              {member.fullName.split(' ').map(n => n[0]).join('')}
-                            </span>
+                {/* Two Column Layout: Images on Left, Description on Right */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  {/* Images */}
+                  {post.images.length > 0 && (
+                    <div className="flex flex-col gap-4">
+                      {post.images.map((image, index) => (
+                        <div key={index} className="aspect-video bg-muted rounded-lg overflow-hidden">
+                          <img
+                            src={image}
+                            alt={`Post image ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              const nextSibling = e.currentTarget.nextElementSibling as HTMLElement;
+                              if (nextSibling) {
+                                nextSibling.style.display = 'flex';
+                              }
+                            }}
+                          />
+                          <div className="w-full h-full flex items-center justify-center text-muted-foreground hidden">
+                            <ImageIcon className="h-8 w-8" />
                           </div>
-                          <span className="text-sm">{member.fullName}</span>
-                          {member.role && (
-                            <span className="text-xs text-muted-foreground">({member.role})</span>
-                          )}
                         </div>
                       ))}
                     </div>
+                  )}
+
+                  {/* Description and Meta */}
+                  <div className="flex flex-col">
+                    {/* Description */}
+                    <p className="text-foreground leading-relaxed mb-6 whitespace-pre-wrap text-sm">
+                      {post.description}
+                    </p>
+
+                    {/* Tagged Members */}
+                    {post.taggedMembers.length > 0 && (
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium text-muted-foreground mb-2 flex items-center gap-2">
+                          <Users className="h-4 w-4" />
+                          Participants
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {post.taggedMembers.map((member, index) => (
+                            <div key={index} className="flex items-center gap-2 px-3 py-1 bg-secondary rounded-full">
+                              <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center">
+                                <span className="text-xs font-medium text-primary">
+                                  {member.fullName.split(' ').map(n => n[0]).join('')}
+                                </span>
+                              </div>
+                              <span className="text-sm">{member.fullName}</span>
+                              {member.role && (
+                                <span className="text-xs text-muted-foreground">({member.role})</span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
 
                 {/* Footer */}
                 <div className="flex items-center justify-between pt-4 border-t border-border text-sm text-muted-foreground">
