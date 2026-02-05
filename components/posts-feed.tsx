@@ -65,14 +65,19 @@ export function PostsFeed() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Student Posts</h1>
-        <p className="text-muted-foreground">
-          Discover the latest news, events, and achievements from the ASM community
-        </p>
+    <div className="w-full">
+      {/* Hero Banner */}
+      <div className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground py-16 sm:py-20 mb-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">Student Posts</h1>
+          <p className="text-lg text-primary-foreground/90 max-w-2xl">
+            Discover the latest news, events, and achievements from the ASM community
+          </p>
+        </div>
       </div>
+
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -152,8 +157,8 @@ export function PostsFeed() {
       )}
 
       {/* Results count */}
-      <p className="text-sm text-muted-foreground mb-4">
-        Showing {filteredPosts.length} {filteredPosts.length === 1 ? 'post' : 'posts'}
+      <p className="text-sm text-muted-foreground mb-8">
+        {filteredPosts.length} {filteredPosts.length === 1 ? 'post' : 'posts'}
       </p>
 
       {/* Posts List - All posts displayed fully */}
@@ -169,22 +174,22 @@ export function PostsFeed() {
           </Button>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {filteredPosts.map(post => (
-            <article key={post.id} className="bg-card rounded-lg border border-border overflow-hidden shadow-sm">
+            <article key={post.id} className="bg-card rounded-xl border border-border overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
               {/* Post Header */}
-              <div className="bg-primary text-primary-foreground px-6 py-4">
+              <div className="bg-muted px-6 py-4 border-b border-border">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-primary-foreground rounded-full flex items-center justify-center">
-                      <span className="text-primary font-bold text-sm">ASM</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-primary rounded flex items-center justify-center flex-shrink-0">
+                      <span className="text-primary-foreground font-bold text-xs">ASM</span>
                     </div>
                     <div>
-                      <p className="text-xs text-primary-foreground/80">American School of Milan</p>
-                      <p className="text-sm font-medium">Student Posts</p>
+                      <p className="text-xs font-medium text-muted-foreground">American School of Milan</p>
+                      <p className="text-sm font-semibold text-foreground">{post.authorName}</p>
                     </div>
                   </div>
-                  <span className="text-sm text-primary-foreground/80">{formatDate(post.createdAt)}</span>
+                  <span className="text-xs text-muted-foreground">{formatDate(post.createdAt)}</span>
                 </div>
               </div>
 
@@ -194,9 +199,9 @@ export function PostsFeed() {
                 <h2 className="text-2xl font-bold text-foreground mb-4">{post.title}</h2>
 
                 {/* Filters */}
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-6">
                   {post.filters.map(filter => (
-                    <Badge key={filter} className="bg-primary/10 text-primary border-primary/20">
+                    <Badge key={filter} className="bg-primary/10 text-primary border border-primary/20 font-medium text-xs">
                       {filter}
                     </Badge>
                   ))}
@@ -273,16 +278,17 @@ export function PostsFeed() {
 
       {/* Login Section */}
       {!isAuthenticated && (
-        <div className="mt-12 pt-8 border-t border-border">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-foreground mb-2">Login to Create Posts</h3>
-            <p className="text-muted-foreground mb-6">
-              Students can create posts, and administrators can approve them.
+        <div className="mt-16 pt-12 border-t border-border">
+          <div className="text-center max-w-md mx-auto">
+            <h3 className="text-2xl font-bold text-foreground mb-3">Join the Community</h3>
+            <p className="text-muted-foreground mb-8">
+              Sign in to share your posts and connect with the ASM community.
             </p>
             <LoginForm onSuccess={() => {}} />
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

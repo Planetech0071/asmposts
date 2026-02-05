@@ -23,14 +23,13 @@ export function ASMHeader({ currentView, onNavigate }: ASMHeaderProps) {
 
   const navItems = [
     { id: 'posts', label: 'Posts', showAlways: true },
-    { id: 'posts', label: 'Student Posts', showAlways: true },
     { id: 'create', label: 'Create Post', showWhen: isAuthenticated && currentUser?.role === 'student' },
     { id: 'admin', label: 'Admin Panel', showWhen: isAuthenticated && currentUser?.role === 'admin' },
   ].filter(item => item.showAlways || item.showWhen);
 
   return (
-    <header className="bg-primary text-primary-foreground sticky top-0 z-50 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="bg-white border-b border-border sticky top-0 z-40 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 py-5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo and School Name */}
           <div className="flex items-center gap-3">
@@ -44,12 +43,12 @@ export function ASMHeader({ currentView, onNavigate }: ASMHeaderProps) {
             </button>
             
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary-foreground rounded-full flex items-center justify-center">
-                <span className="text-primary font-bold text-sm">ASM</span>
+              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
+                <span className="text-primary-foreground font-bold text-sm">ASM</span>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-lg font-semibold tracking-tight">American School of Milan</h1>
-                <p className="text-xs text-primary-foreground/80">Student Posts</p>
+                <p className="text-xs font-medium text-muted-foreground">ASM</p>
+                <p className="text-sm font-bold text-foreground">Student Posts</p>
               </div>
             </div>
           </div>
@@ -63,8 +62,8 @@ export function ASMHeader({ currentView, onNavigate }: ASMHeaderProps) {
                 onClick={() => onNavigate(item.id as 'create' | 'admin' | 'posts')}
                 className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
                   currentView === item.id
-                    ? 'bg-primary-foreground/20 text-primary-foreground'
-                    : 'text-primary-foreground/80 hover:text-primary-foreground hover:bg-primary-foreground/10'
+                    ? 'text-primary border-b-2 border-primary'
+                    : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
                 {item.label}
